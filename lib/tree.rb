@@ -80,9 +80,9 @@ class Tree
   def inorder(node = @root, output = [], &block)
     return if node.nil?
 
-    in_order(node.left, output, &block)
+    inorder(node.left, output, &block)
     output.push(block_given? ? block.call(node) : node.data)
-    in_order(node.right, output, &block)
+    inorder(node.right, output, &block)
 
     output
   end
@@ -91,8 +91,8 @@ class Tree
     return if node.nil?
 
     output.push(block_given? ? block.call(node) : node.data)
-    pre_order(node.left, output, &block)
-    pre_order(node.right, output, &block)
+    preorder(node.left, output, &block)
+    preorder(node.right, output, &block)
 
     output
   end
@@ -100,11 +100,21 @@ class Tree
   def postorder(node = @root, output = [], &block)
     return if node.nil?
 
-    post_order(node.left, output, &block)
-    post_order(node.right, output, &block)
+    postorder(node.left, output, &block)
+    postorder(node.right, output, &block)
     output.push(block_given? ? block.call(node) : node.data)
 
     output
+  end
+
+  def height(node = @root)
+    unless node.nil? || node == @root
+      node = (node.instance_of?(Node) ? find(node.data) : find(node))
+    end
+
+    return -1 if node.nil?
+
+    [height(node.left), height(node.right)].max + 1
   end
   
 end
@@ -116,5 +126,4 @@ tree.insert(45)
 tree.pretty_print
 tree.delete(45)
 tree.pretty_print
-p tree.inorder
 p tree.level_order
