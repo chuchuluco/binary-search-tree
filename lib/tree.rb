@@ -1,4 +1,4 @@
-require './node.rb'
+require './main2.rb'
 class Tree 
   attr_accessor :root
   def initialize(array)
@@ -53,11 +53,63 @@ class Tree
     node
   end
 
+  def find(value, node = root)
+    return node if node.nil? || node.data == value
+
+    value < node.data ? find(value, node.left) : find(value, node.right)
+  end
+
+
+  def leftmost_leaf(node)
+    node = node.left until node.left.nil?
+
+    node
+  end
+
+  def level_order(queue = [root])
+    result = []
+    until queue.empty?
+      node = queue.shift
+      block_given? ? yield(node) : result << node.data
+      queue << node.left unless node.left.nil?
+      queue << node.right unless node.right.nil?
+    end
+    result unless block_given?
+  end
+
+  def inorder(node = @root)
+    return if node.nil?
+      inorder(node.left)
+      print "#{node.data} "
+      inorder(node.right)
+  end
+
+  def preorder(node = @root)
+    return if node.nil?
+
+    print "#{node.data} "
+    preorder(node.left)
+    preorder(node.right)
+  end
+
+  def inorder(node = @root)
+    return if node.nil?
+
+    inorder(node.left)
+    print "#{node.data} "
+    inorder(node.right)
+  end
+
+  def postorder(node = @root)
+    return if node.nil?
+
+    postorder(node.left)
+    postorder(node.right)
+    print "#{node.data} "
+  end
+  
 end
 
-array_num =  [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
-tree = Tree.new(array_num)
-tree.pretty_print
 array_num =  [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
 tree = Tree.new(array_num)
 tree.pretty_print
@@ -65,3 +117,5 @@ tree.insert(45)
 tree.pretty_print
 tree.delete(45)
 tree.pretty_print
+p tree.inorder
+p tree.level_order
