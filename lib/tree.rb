@@ -77,35 +77,34 @@ class Tree
     result unless block_given?
   end
 
-  def inorder(node = @root)
+  def inorder(node = @root, output = [], &block)
     return if node.nil?
-      inorder(node.left)
-      print "#{node.data} "
-      inorder(node.right)
+
+    in_order(node.left, output, &block)
+    output.push(block_given? ? block.call(node) : node.data)
+    in_order(node.right, output, &block)
+
+    output
   end
 
-  def preorder(node = @root)
+  def preorder(node = @root, output = [], &block)
     return if node.nil?
 
-    print "#{node.data} "
-    preorder(node.left)
-    preorder(node.right)
+    output.push(block_given? ? block.call(node) : node.data)
+    pre_order(node.left, output, &block)
+    pre_order(node.right, output, &block)
+
+    output
   end
 
-  def inorder(node = @root)
+  def postorder(node = @root, output = [], &block)
     return if node.nil?
 
-    inorder(node.left)
-    print "#{node.data} "
-    inorder(node.right)
-  end
+    post_order(node.left, output, &block)
+    post_order(node.right, output, &block)
+    output.push(block_given? ? block.call(node) : node.data)
 
-  def postorder(node = @root)
-    return if node.nil?
-
-    postorder(node.left)
-    postorder(node.right)
-    print "#{node.data} "
+    output
   end
   
 end
