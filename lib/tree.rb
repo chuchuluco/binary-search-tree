@@ -1,4 +1,4 @@
-require './main2.rb'
+require './node.rb'
 class Tree 
   attr_accessor :root
   def initialize(array)
@@ -53,7 +53,7 @@ class Tree
     node
   end
 
-  def find(value, node = root)
+  def find(value, node = @root)
     return node if node.nil? || node.data == value
 
     value < node.data ? find(value, node.left) : find(value, node.right)
@@ -66,7 +66,7 @@ class Tree
     node
   end
 
-  def level_order(queue = [root])
+  def level_order(queue = [@root])
     result = []
     until queue.empty?
       node = queue.shift
@@ -107,6 +107,7 @@ class Tree
     output
   end
 
+  
   def height(node = @root)
     unless node.nil? || node == @root
       node = (node.instance_of?(Node) ? find(node.data) : find(node))
@@ -117,13 +118,44 @@ class Tree
     [height(node.left), height(node.right)].max + 1
   end
   
-end
+  def depth(node)
+    return nil if node.nil?
 
-array_num =  [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
-tree = Tree.new(array_num)
-tree.pretty_print
-tree.insert(45)
-tree.pretty_print
-tree.delete(45)
-tree.pretty_print
-p tree.level_order
+    curr_node = @root
+    count = 0
+    until curr_node.data == node.data
+      count += 1
+      curr_node = curr_node.left if node.data < curr_node.data
+      curr_node = curr_node.right if node.data > curr_node.data
+    end
+
+    count
+  end
+
+  def balanced?(node = @root)
+    return true if node.nil?
+
+    left_height = height(node.left)
+    right_height = height(node.right)
+
+    return true if (left_height - right_height).abs <= 1 && balanced?(node.left) && balanced?(node.right)
+
+    false
+  end
+
+  def rebalance!
+    values = in_order
+    @root = build_tree(values)
+  end
+    
+  def in_order(node = @root, output = [], &block)
+    return if node.nil?
+
+    in_order(node.left, output, &block)
+    output.push(block_given? ? block.call(node) : node.data)
+    in_order(node.right, output, &block)
+
+    output
+  end
+    
+end
